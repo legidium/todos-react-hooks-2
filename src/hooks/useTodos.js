@@ -1,32 +1,99 @@
-import { useReducer, useMemo } from "react";
+import {useReducer, useState, useCallback, useMemo} from 'react';
 
-export default function useTodos(initialTodos) {
-  const [todos, dispatch] = useReducer(reducer, initialTodos);
 
-  const actions = useMemo(
-    () => ({
-      add: todo => dispatch({ type: "ADD_TODO", todo }),
-      remove: id => dispatch({ type: "REMOVE_TODO", id }),
-      toggle: id => dispatch({ type: "TOGGLE_TODO", id }),
-      clear: () => dispatch({ type: "CLEAR_TODO" })
-    }),
-    []
-  );
-
-  return [todos, actions];
+export function addTodo(text) {
+    return {
+        type: 'ADD_TODO',
+        todo: {
+            id: Date.now(),
+            text: text,
+            completed: false
+        }
+    };
 }
 
-function reducer(state, action) {
-  const { type } = action;
-
-  if (type === "ADD_TODO") {
-    return [...state, action.todo];
-  }
-
-  if (type === "REMOVE_TODO") {
-    const todos = state.filter(({ id }) => id !== action.id);
-    return todos.length !== state.length ? todos : state;
-  }
-
-  return state;
+export function removeTodo(id) {
+    return {
+        type: 'REMOVE_TODO',
+        id: id
+    };
 }
+
+export function toggleTodo(id) {
+    return {
+        type: 'TOGGLE_TODO',
+        id: id
+    };
+}
+
+export function clearCompleted() {
+    return {
+        type: 'CLEAR_COMPLETED'
+    };
+}
+
+function reducer(todos, action) {
+    const {type} = action;
+
+    switch (type) {
+        case 'ADD_TODO':
+            return [...todos, action.todo];
+
+        case 'REMOVE_TODO':
+            return todos.filter((todo) => todo.id !== action.id);
+
+        case 'CLEAR_COMPLETED':
+            return todos.filter((todo) => !todo.completed);
+
+        default:
+            throw Error(`Unknown action type ${type}`);
+    }
+}
+
+function useTodos(initialTodos = []) {
+    const [todos, dispatch] = useReducer(reducer, initialTodos);
+    const [filter, setFilter] = useState('ALL');
+
+    const filteredTodos = useMemo(
+        () => todos.filter(({completed}) => {
+            if (filter === 'COMPLETED') return completed;
+            if (filter === 'ACTIVE') return !completed;
+            return true;
+        }),
+        [todos, filter]
+    );
+
+    const completedTodos = useMemo(
+        () => todos.filter(({completed}) => completed),
+        [todos]
+    );
+
+    const handleAddTodo = useCallback(
+        (text) => dispatch(addTodo(text)),
+        []
+    );
+
+    const handleClearCompleted = useCallback(
+        () => dispatch(clearCompleted()),
+        []
+    );
+
+    const handleSelectFilter = useCallback(
+        (filter) => setFilter(filter),
+        []
+    );
+
+    return {
+        todos,
+        filteredTodos,
+        completedTodos,
+        filter,
+        dispatch,
+        setFilter,
+        handleAddTodo,
+        handleSelectFilter,
+        handleClearCompleted
+    };
+}
+
+export default useTodos;

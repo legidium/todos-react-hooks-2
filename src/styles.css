@@ -1,8 +1,3 @@
-.App {
-  font-family: sans-serif;
-  text-align: center;
-}
-
 html,
 body {
   margin: 0;
@@ -46,32 +41,32 @@ body {
   display: none;
 }
 
-.todoapp {
+.app {
   background: #fff;
   margin: 130px 0 40px 0;
   position: relative;
   box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.2), 0 25px 50px 0 rgba(0, 0, 0, 0.1);
 }
 
-.todoapp input::-webkit-input-placeholder {
+.app input::-webkit-input-placeholder {
   font-style: italic;
   font-weight: 300;
   color: #e6e6e6;
 }
 
-.todoapp input::-moz-placeholder {
+.app input::-moz-placeholder {
   font-style: italic;
   font-weight: 300;
   color: #e6e6e6;
 }
 
-.todoapp input::input-placeholder {
+.app input::input-placeholder {
   font-style: italic;
   font-weight: 300;
   color: #e6e6e6;
 }
 
-.todoapp h1 {
+.app h1 {
   position: absolute;
   top: -155px;
   width: 100%;
@@ -320,8 +315,9 @@ body {
   display: inline;
 }
 
-.filters li a {
+.filters li span {
   color: inherit;
+  cursor: pointer;
   margin: 3px;
   padding: 3px 7px;
   text-decoration: none;
@@ -329,11 +325,11 @@ body {
   border-radius: 3px;
 }
 
-.filters li a:hover {
+.filters li span:hover {
   border-color: rgba(175, 47, 47, 0.1);
 }
 
-.filters li a.selected {
+.filters li span.selected {
   border-color: rgba(175, 47, 47, 0.2);
 }
 
