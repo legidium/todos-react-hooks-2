@@ -7,27 +7,24 @@ import Filter from './Filter';
 
 function Todos({
     todos,
+    count,
+    completedCount,
     filter,
-    filteredTodos,
-    completedTodos,
-    handleAddTodo,
-    handleSelectFilter,
-    handleClearCompleted
+    addTodo,
+    setFilter,
+    clearCompletedTodos
 }) {
-    const count = todos.length;
-    const countCompleted = completedTodos.length;
-
     return (
         <div className="todos">
             <Header />
-            <Input onSubmit={handleAddTodo} />
-            <List todos={filteredTodos} />
+            <Input onSubmit={addTodo} />
+            <List todos={todos} />
             <Filter
                 filter={filter}
                 count={count}
-                countCompleted={countCompleted}
-                onSelectFilter={handleSelectFilter}
-                onClearCompleted={handleClearCompleted}
+                countCompleted={completedCount}
+                onSelectFilter={setFilter}
+                onClearCompleted={clearCompletedTodos}
             />
         </div>
     );

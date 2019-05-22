@@ -1,6 +1,8 @@
-import React from 'react';
+import React, {useState} from 'react';
 
 const activeClass = 'selected';
+
+const noop = () => {};
 
 const filters = [
     {title: 'All', value: 'ALL'},
@@ -12,8 +14,8 @@ function Filter({
     filter = 'ALL',
     count = 0,
     countCompleted = 0,
-    onClearCompleted,
-    onSelectFilter
+    onClearCompleted = noop,
+    onSelectFilter = noop
 }) {
     return (
         <footer className="footer">

@@ -1,34 +1,34 @@
-import {useReducer, useState, useCallback, useMemo} from 'react';
+import {useReducer, useMemo, useCallback} from 'react';
 
-
-export function addTodo(text) {
+export function add(text) {
     return {
         type: 'ADD_TODO',
         todo: {
             id: Date.now(),
             text: text,
-            completed: false
+            completed: true
         }
     };
 }
 
-export function removeTodo(id) {
+export function remove(id) {
     return {
         type: 'REMOVE_TODO',
         id: id
     };
 }
 
-export function toggleTodo(id) {
+export function toggle(id) {
     return {
         type: 'TOGGLE_TODO',
         id: id
     };
 }
 
-export function clearCompleted() {
+export function clear(status) {
     return {
-        type: 'CLEAR_COMPLETED'
+        type: 'CLEAR_TODOS',
+        status,
     };
 }
 
@@ -42,57 +42,49 @@ function reducer(todos, action) {
         case 'REMOVE_TODO':
             return todos.filter((todo) => todo.id !== action.id);
 
-        case 'CLEAR_COMPLETED':
-            return todos.filter((todo) => !todo.completed);
+        case 'CLEAR_TODOS':
+            const {status} = action;
+            if (status === 'COMPLETED' || status === 'ACTIVE') {
+                return todos.filter(({completed}) => status === 'COMPLETED' ? !completed : completed);
+            }
+            return [];
 
         default:
-            throw Error(`Unknown action type ${type}`);
+            throw new Error(`Unknown action type ${type}`);
     }
 }
 
 function useTodos(initialTodos = []) {
     const [todos, dispatch] = useReducer(reducer, initialTodos);
-    const [filter, setFilter] = useState('ALL');
-
-    const filteredTodos = useMemo(
-        () => todos.filter(({completed}) => {
-            if (filter === 'COMPLETED') return completed;
-            if (filter === 'ACTIVE') return !completed;
-            return true;
-        }),
-        [todos, filter]
-    );
 
     const completedTodos = useMemo(
         () => todos.filter(({completed}) => completed),
         [todos]
     );
 
-    const handleAddTodo = useCallback(
-        (text) => dispatch(addTodo(text)),
+    const addTodo = useCallback(
+        (text) => dispatch(add(text)),
         []
     );
 
-    const handleClearCompleted = useCallback(
-        () => dispatch(clearCompleted()),
+    const clearTodos = useCallback(
+        (status) => dispatch(clear(status)),
         []
     );
 
-    const handleSelectFilter = useCallback(
-        (filter) => setFilter(filter),
+    const clearCompletedTodos = useCallback(
+        () => dispatch(clear('COMPLETED')),
         []
     );
 
     return {
         todos,
-        filteredTodos,
-        completedTodos,
-        filter,
         dispatch,
-        setFilter,
-        handleAddTodo,
-        handleSelectFilter,
-        handleClearCompleted
+        addTodo,
+        clearTodos,
+        clearCompletedTodos,
+        count: todos.length,
+        completedCount: 10, // completedTodos.length
     };
 }
 
